@@ -15,7 +15,6 @@ const ProjectDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showTaskForm, setShowTaskForm] = useState(false);
-  const [showEditProjectForm, setShowEditProjectForm] = useState(false);
   const [taskFormData, setTaskFormData] = useState({
     title: '',
     description: '',
@@ -23,11 +22,6 @@ const ProjectDetails = () => {
     assignedTo: '',
     priority: 'medium',
     dueDate: '',
-  });
-  const [editProjectData, setEditProjectData] = useState({
-    name: '',
-    description: '',
-    teamMembers: [],
   });
 
   useEffect(() => {
@@ -122,44 +116,8 @@ const ProjectDetails = () => {
   };
 
   const handleEditProject = () => {
-    setEditProjectData({
-      name: project.name,
-      description: project.description || '',
-      teamMembers: project.teamMembers?.map((m) => m._id || m) || [],
-    });
-    setShowEditProjectForm(true);
-  };
-
-  const handleEditProjectChange = (e) => {
-    const { name, value } = e.target;
-    setEditProjectData({
-      ...editProjectData,
-      [name]: value,
-    });
-  };
-
-  const handleTeamMemberChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-    setEditProjectData({
-      ...editProjectData,
-      teamMembers: selectedOptions,
-    });
-  };
-
-  const handleUpdateProject = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await projectService.updateProject(id, editProjectData);
-      if (response.success) {
-        setShowEditProjectForm(false);
-        fetchProject();
-      } else {
-        setError(response.message || 'Failed to update project');
-      }
-    } catch (err) {
-      setError('Failed to update project');
-      console.error(err);
-    }
+    // Navigate to EditProject page
+    navigate(`/projects/${id}/edit`);
   };
 
   const handleEditTask = (task) => {
@@ -222,11 +180,9 @@ const ProjectDetails = () => {
             </Link>
             {(user?.role === 'admin' || user?.role === 'manager') && (
               <>
-                {!showEditProjectForm && (
-                  <button onClick={handleEditProject} className="btn btn-primary">
-                    Edit Project
-                  </button>
-                )}
+                <button onClick={handleEditProject} className="btn btn-primary">
+                  Edit Project
+                </button>
                 {canEdit && (
                   <button onClick={handleDeleteProject} className="btn btn-danger">
                     Delete Project
@@ -238,66 +194,6 @@ const ProjectDetails = () => {
         </div>
 
         {error && <div className="error-message">{error}</div>}
-
-        {/* Edit Project Form */}
-        {(user?.role === 'admin' || user?.role === 'manager') && showEditProjectForm && (
-          <div className="card">
-            <form onSubmit={handleUpdateProject}>
-              <h3>Edit Project</h3>
-              <div className="form-group">
-                <label>Project Name *</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={editProjectData.name}
-                  onChange={handleEditProjectChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Description</label>
-                <textarea
-                  name="description"
-                  value={editProjectData.description}
-                  onChange={handleEditProjectChange}
-                  rows="4"
-                  maxLength="500"
-                />
-              </div>
-              <div className="form-group">
-                <label>Team Members</label>
-                <select
-                  name="teamMembers"
-                  multiple
-                  value={editProjectData.teamMembers}
-                  onChange={handleTeamMemberChange}
-                  size="5"
-                >
-                  {allUsers.map((userOption) => (
-                    <option key={userOption._id} value={userOption._id}>
-                      {userOption.name} ({userOption.email}) - {userOption.role}
-                    </option>
-                  ))}
-                </select>
-                <small className="form-hint">
-                  Hold Ctrl (or Cmd on Mac) to select multiple members
-                </small>
-              </div>
-              <div className="form-actions">
-                <button type="submit" className="btn btn-primary">
-                  Update Project
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowEditProjectForm(false)}
-                  className="btn btn-secondary"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
 
         {/* Create Task Form */}
         {(user?.role === 'admin' || user?.role === 'manager') && (

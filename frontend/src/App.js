@@ -16,6 +16,7 @@ import UserManagement from './pages/UserManagement';
 import CreateProject from './pages/CreateProject';
 import CreateTask from './pages/CreateTask';
 import EditTask from './pages/EditTask';
+import EditProject from './pages/EditProject';
 
 function App() {
   return (
@@ -61,6 +62,14 @@ function App() {
                 element={
                   <ManagerRoute>
                     <CreateProject />
+                  </ManagerRoute>
+                }
+              />
+              <Route
+                path="/projects/:id/edit"
+                element={
+                  <ManagerRoute>
+                    <EditProject />
                   </ManagerRoute>
                 }
               />
