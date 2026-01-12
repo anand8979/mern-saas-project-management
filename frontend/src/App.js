@@ -15,6 +15,7 @@ import KanbanBoard from './pages/KanbanBoard';
 import UserManagement from './pages/UserManagement';
 import CreateProject from './pages/CreateProject';
 import CreateTask from './pages/CreateTask';
+import EditTask from './pages/EditTask';
 
 function App() {
   return (
@@ -68,6 +69,14 @@ function App() {
                 element={
                   <ManagerRoute>
                     <CreateTask />
+                  </ManagerRoute>
+                }
+              />
+              <Route
+                path="/tasks/:id/edit"
+                element={
+                  <ManagerRoute>
+                    <EditTask />
                   </ManagerRoute>
                 }
               />

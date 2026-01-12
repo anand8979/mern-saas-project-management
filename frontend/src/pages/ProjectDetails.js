@@ -16,7 +16,6 @@ const ProjectDetails = () => {
   const [error, setError] = useState('');
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [showEditProjectForm, setShowEditProjectForm] = useState(false);
-  const [editingTaskId, setEditingTaskId] = useState(null);
   const [taskFormData, setTaskFormData] = useState({
     title: '',
     description: '',
@@ -29,14 +28,6 @@ const ProjectDetails = () => {
     name: '',
     description: '',
     teamMembers: [],
-  });
-  const [editTaskData, setEditTaskData] = useState({
-    title: '',
-    description: '',
-    status: 'todo',
-    assignedTo: '',
-    priority: 'medium',
-    dueDate: '',
   });
 
   useEffect(() => {
@@ -172,43 +163,12 @@ const ProjectDetails = () => {
   };
 
   const handleEditTask = (task) => {
-    setEditTaskData({
-      title: task.title,
-      description: task.description || '',
-      status: task.status,
-      assignedTo: task.assignedTo?._id || task.assignedTo || '',
-      priority: task.priority,
-      dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
-    });
-    setEditingTaskId(task._id);
-  };
-
-  const handleEditTaskChange = (e) => {
-    const { name, value } = e.target;
-    setEditTaskData({
-      ...editTaskData,
-      [name]: value,
+    // Navigate to EditTask page with projectId in state
+    navigate(`/tasks/${task._id}/edit`, {
+      state: { projectId: id },
     });
   };
 
-  const handleUpdateTask = async (taskId) => {
-    try {
-      const taskData = {
-        ...editTaskData,
-        dueDate: editTaskData.dueDate || undefined,
-      };
-      const response = await taskService.updateTask(taskId, taskData);
-      if (response.success) {
-        setEditingTaskId(null);
-        fetchProject();
-      } else {
-        setError(response.message || 'Failed to update task');
-      }
-    } catch (err) {
-      setError('Failed to update task');
-      console.error(err);
-    }
-  };
 
   const handleDeleteTask = async (taskId) => {
     if (!window.confirm('Are you sure you want to delete this task?')) {
@@ -448,137 +408,43 @@ const ProjectDetails = () => {
             <div className="tasks-list">
               {tasks.map((task) => (
                 <div key={task._id} className="task-card">
-                  {editingTaskId === task._id ? (
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        handleUpdateTask(task._id);
-                      }}
-                    >
-                      <div className="form-group">
-                        <label>Title *</label>
-                        <input
-                          type="text"
-                          name="title"
-                          value={editTaskData.title}
-                          onChange={handleEditTaskChange}
-                          required
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label>Description</label>
-                        <textarea
-                          name="description"
-                          value={editTaskData.description}
-                          onChange={handleEditTaskChange}
-                          rows="3"
-                        />
-                      </div>
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>Status</label>
-                          <select
-                            name="status"
-                            value={editTaskData.status}
-                            onChange={handleEditTaskChange}
-                          >
-                            <option value="todo">Todo</option>
-                            <option value="in-progress">In Progress</option>
-                            <option value="done">Done</option>
-                          </select>
-                        </div>
-                        <div className="form-group">
-                          <label>Priority</label>
-                          <select
-                            name="priority"
-                            value={editTaskData.priority}
-                            onChange={handleEditTaskChange}
-                          >
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                          </select>
-                        </div>
-                        <div className="form-group">
-                          <label>Assign To *</label>
-                          <select
-                            name="assignedTo"
-                            value={editTaskData.assignedTo}
-                            onChange={handleEditTaskChange}
-                            required
-                          >
-                            <option value="">Select user</option>
-                            {allUsers.map((u) => (
-                              <option key={u._id} value={u._id}>
-                                {u.name} ({u.role})
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="form-group">
-                          <label>Due Date</label>
-                          <input
-                            type="date"
-                            name="dueDate"
-                            value={editTaskData.dueDate}
-                            onChange={handleEditTaskChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-actions">
-                        <button type="submit" className="btn btn-primary">
-                          Update Task
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setEditingTaskId(null)}
-                          className="btn btn-secondary"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </form>
-                  ) : (
-                    <>
-                      <div className="task-card-header">
-                        <h3>{task.title}</h3>
-                        <div className="task-badges">
-                          <span className={`task-status task-status-${task.status}`}>
-                            {task.status}
-                          </span>
-                          <span className={`task-priority task-priority-${task.priority}`}>
-                            {task.priority}
-                          </span>
-                        </div>
-                      </div>
-                      {task.description && (
-                        <p className="task-description">{task.description}</p>
-                      )}
-                      <div className="task-card-meta">
-                        <span>Assigned to: {task.assignedTo?.name || 'Unassigned'}</span>
-                        {task.dueDate && (
-                          <span>
-                            Due: {new Date(task.dueDate).toLocaleDateString()}
-                          </span>
-                        )}
-                      </div>
-                      {(user?.role === 'admin' || user?.role === 'manager') && (
-                        <div className="task-card-actions">
-                          <button
-                            onClick={() => handleEditTask(task)}
-                            className="btn btn-primary btn-sm"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteTask(task._id)}
-                            className="btn btn-danger btn-sm"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                    </>
+                  <div className="task-card-header">
+                    <h3>{task.title}</h3>
+                    <div className="task-badges">
+                      <span className={`task-status task-status-${task.status}`}>
+                        {task.status}
+                      </span>
+                      <span className={`task-priority task-priority-${task.priority}`}>
+                        {task.priority}
+                      </span>
+                    </div>
+                  </div>
+                  {task.description && (
+                    <p className="task-description">{task.description}</p>
+                  )}
+                  <div className="task-card-meta">
+                    <span>Assigned to: {task.assignedTo?.name || 'Unassigned'}</span>
+                    {task.dueDate && (
+                      <span>
+                        Due: {new Date(task.dueDate).toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+                  {(user?.role === 'admin' || user?.role === 'manager') && (
+                    <div className="task-card-actions">
+                      <button
+                        onClick={() => handleEditTask(task)}
+                        className="btn btn-primary btn-sm"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteTask(task._id)}
+                        className="btn btn-danger btn-sm"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   )}
                 </div>
               ))}
