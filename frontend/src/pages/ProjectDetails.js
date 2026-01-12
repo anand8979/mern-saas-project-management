@@ -26,10 +26,14 @@ const ProjectDetails = () => {
 
   useEffect(() => {
     fetchProject();
-    if (user?.role === 'admin' || user?.role === 'manager') {
+  }, [id, user]);
+
+  useEffect(() => {
+    // Fetch users after project is loaded
+    if (project && (user?.role === 'admin' || user?.role === 'manager')) {
       fetchUsers();
     }
-  }, [id, user]);
+  }, [project, user]);
 
   const fetchProject = async () => {
     try {
@@ -51,9 +55,17 @@ const ProjectDetails = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await userService.getUsers();
-      if (response.success) {
-        setAllUsers(response.data);
+      if (user?.role === 'admin') {
+        // Admin can fetch all users
+        const response = await userService.getUsers();
+        if (response.success) {
+          setAllUsers(response.data);
+        }
+      } else if (user?.role === 'manager') {
+        // Manager can only use project team members
+        if (project?.teamMembers && project.teamMembers.length > 0) {
+          setAllUsers(project.teamMembers);
+        }
       }
     } catch (err) {
       console.error('Failed to load users');

@@ -21,8 +21,14 @@ const EditProject = () => {
 
   useEffect(() => {
     fetchProject();
-    fetchUsers();
   }, [id]);
+
+  useEffect(() => {
+    // Fetch users after project is loaded (especially for managers)
+    if (project) {
+      fetchUsers();
+    }
+  }, [project]);
 
   const fetchProject = async () => {
     try {
@@ -56,11 +62,10 @@ const EditProject = () => {
           setAllUsers(response.data);
         }
       } else if (user?.role === 'manager') {
-        // Manager can fetch all members to add to their project
-        const response = await userService.getUsers();
-        if (response.success) {
-          // Filter to only show members (not other managers/admins)
-          setAllUsers(response.data.filter((u) => u.role === 'member'));
+        // Manager can only manage existing project team members
+        // Use the project's teamMembers that were loaded
+        if (project?.teamMembers && project.teamMembers.length > 0) {
+          setAllUsers(project.teamMembers);
         }
       }
     } catch (err) {
