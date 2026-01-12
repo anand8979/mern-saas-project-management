@@ -522,6 +522,75 @@ code {
   border-top: 1px solid #eee;
 }
 
+.task-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.task-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  margin-top: 1rem;
+}
+
+.task-status-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.task-status-control label {
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.task-status-select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.task-title-link {
+  text-decoration: none;
+  color: #333;
+}
+
+.task-title-link h3 {
+  color: #007bff;
+  margin-bottom: 0.25rem;
+}
+
+.task-title-link:hover h3 {
+  text-decoration: underline;
+}
+
+.task-project-name {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.task-due-date {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.form-hint {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+}
+
 .form-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

@@ -4,8 +4,10 @@ const { body } = require('express-validator');
 const {
   getTasks,
   getTask,
+  getMyTasks,
   createTask,
   updateTask,
+  updateTaskStatus,
   deleteTask,
 } = require('../controllers/taskController');
 const { protect, authorize } = require('../middleware/auth');
@@ -15,10 +17,17 @@ router.use(protect);
 
 /**
  * @route   GET /api/tasks
- * @desc    Get all tasks
+ * @desc    Get all tasks (role-based filtering)
  * @access  Private
  */
 router.get('/', getTasks);
+
+/**
+ * @route   GET /api/tasks/my-tasks
+ * @desc    Get my tasks (for Members)
+ * @access  Private
+ */
+router.get('/my-tasks', getMyTasks);
 
 /**
  * @route   GET /api/tasks/:id
@@ -54,6 +63,22 @@ router.post(
       .withMessage('Priority must be low, medium, or high'),
   ],
   createTask
+);
+
+/**
+ * @route   PUT /api/tasks/:id/status
+ * @desc    Update task status (Members can update their own tasks)
+ * @access  Private
+ */
+router.put(
+  '/:id/status',
+  [
+    body('status')
+      .notEmpty()
+      .isIn(['todo', 'in-progress', 'done'])
+      .withMessage('Status must be todo, in-progress, or done'),
+  ],
+  updateTaskStatus
 );
 
 /**

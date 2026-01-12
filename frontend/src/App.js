@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './utils/PrivateRoute';
 import AdminRoute from './utils/AdminRoute';
+import ManagerRoute from './utils/ManagerRoute';
 import Header from './components/Layout/Header';
 
 // Pages
@@ -12,6 +13,8 @@ import Dashboard from './pages/Dashboard';
 import ProjectDetails from './pages/ProjectDetails';
 import KanbanBoard from './pages/KanbanBoard';
 import UserManagement from './pages/UserManagement';
+import CreateProject from './pages/CreateProject';
+import CreateTask from './pages/CreateTask';
 
 function App() {
   return (
@@ -48,6 +51,24 @@ function App() {
                   <PrivateRoute>
                     <KanbanBoard />
                   </PrivateRoute>
+                }
+              />
+
+              {/* Admin/Manager routes */}
+              <Route
+                path="/projects/new"
+                element={
+                  <ManagerRoute>
+                    <CreateProject />
+                  </ManagerRoute>
+                }
+              />
+              <Route
+                path="/tasks/new"
+                element={
+                  <ManagerRoute>
+                    <CreateTask />
+                  </ManagerRoute>
                 }
               />
 

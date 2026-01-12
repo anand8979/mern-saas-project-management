@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { projectService } from '../services/projectService';
 import { taskService } from '../services/taskService';
 import { useAuth } from '../context/AuthContext';
+import MemberDashboard from './MemberDashboard';
 
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
@@ -16,10 +17,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { user } = useAuth();
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const fetchData = async () => {
     try {
@@ -50,6 +47,20 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Only fetch data for admin/manager, members use MemberDashboard
+    if (user?.role !== 'member') {
+      fetchData();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
+  // Render Member Dashboard for members
+  if (user?.role === 'member') {
+    return <MemberDashboard />;
+  }
 
   if (loading) {
     return <div className="loading">Loading dashboard...</div>;
@@ -143,6 +154,11 @@ const Dashboard = () => {
         <div className="dashboard-section">
           <div className="section-header">
             <h2>Recent Tasks</h2>
+            {(user?.role === 'admin' || user?.role === 'manager') && (
+              <Link to="/tasks/new" className="btn btn-primary">
+                + New Task
+              </Link>
+            )}
           </div>
 
           {tasks.length === 0 ? (

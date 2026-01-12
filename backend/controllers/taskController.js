@@ -284,11 +284,112 @@ const deleteTask = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Get my tasks (for Members)
+ * @route   GET /api/tasks/my-tasks
+ * @access  Private
+ */
+const getMyTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find({ assignedTo: req.user.id })
+      .populate('project', 'name')
+      .populate('assignedTo', 'name email')
+      .populate('createdBy', 'name email')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: tasks.length,
+      data: tasks,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Server error',
+    });
+  }
+};
+
+/**
+ * @desc    Update task status (for Members - only own tasks)
+ * @route   PUT /api/tasks/:id/status
+ * @access  Private
+ */
+const updateTaskStatus = async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation error',
+        errors: errors.array(),
+      });
+    }
+
+    const task = await Task.findById(req.params.id);
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: 'Task not found',
+      });
+    }
+
+    // Members can only update status of their own tasks
+    if (
+      req.user.role === 'member' &&
+      task.assignedTo.toString() !== req.user.id
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to update this task',
+      });
+    }
+
+    // Only allow status updates for this endpoint
+    const { status } = req.body;
+
+    if (!status || !['todo', 'in-progress', 'done'].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Valid status is required (todo, in-progress, or done)',
+      });
+    }
+
+    task.status = status;
+    await task.save();
+
+    // Populate fields for response
+    await task.populate('project', 'name');
+    await task.populate('assignedTo', 'name email');
+    await task.populate('createdBy', 'name email');
+
+    res.status(200).json({
+      success: true,
+      data: task,
+    });
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(404).json({
+        success: false,
+        message: 'Task not found',
+      });
+    }
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Server error',
+    });
+  }
+};
+
 module.exports = {
   getTasks,
   getTask,
+  getMyTasks,
   createTask,
   updateTask,
+  updateTaskStatus,
   deleteTask,
 };
 

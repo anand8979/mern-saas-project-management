@@ -27,6 +27,16 @@ const Header = () => {
             <Link to="/dashboard" className="nav-link">
               Dashboard
             </Link>
+            {(user?.role === 'admin' || user?.role === 'manager') && (
+              <>
+                <Link to="/projects/new" className="nav-link">
+                  Create Project
+                </Link>
+                <Link to="/tasks/new" className="nav-link">
+                  Create Task
+                </Link>
+              </>
+            )}
             {user?.role === 'admin' && (
               <Link to="/users" className="nav-link">
                 Users

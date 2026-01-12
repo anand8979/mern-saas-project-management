@@ -1,10 +1,16 @@
 import api from './api';
 
 export const taskService = {
-  // Get all tasks
+  // Get all tasks (role-based filtering)
   getTasks: async (projectId = null) => {
     const url = projectId ? `/tasks?projectId=${projectId}` : '/tasks';
     const response = await api.get(url);
+    return response.data;
+  },
+
+  // Get my tasks (for Members)
+  getMyTasks: async () => {
+    const response = await api.get('/tasks/my-tasks');
     return response.data;
   },
 
@@ -23,6 +29,12 @@ export const taskService = {
   // Update task
   updateTask: async (id, taskData) => {
     const response = await api.put(`/tasks/${id}`, taskData);
+    return response.data;
+  },
+
+  // Update task status (for Members)
+  updateTaskStatus: async (id, status) => {
+    const response = await api.put(`/tasks/${id}/status`, { status });
     return response.data;
   },
 
