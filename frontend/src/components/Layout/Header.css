@@ -79,11 +79,12 @@
 }
 
 /* Mobile-specific header adjustments */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .header-content {
     flex-wrap: wrap;
     gap: 0.5rem;
     align-items: center;
+    position: relative;
   }
 
   .logo {
@@ -92,13 +93,101 @@
     word-break: break-word;
   }
 
-  .nav {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+  /* Hamburger button (only visible on mobile) */
+  .mobile-nav-toggle {
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 0;
+    z-index: 1100;
+  }
+
+  .mobile-nav-toggle:focus {
+    outline: 2px solid rgba(0,123,255,0.2);
+    border-radius: 6px;
+  }
+
+  /* Hamburger lines */
+  .hamburger {
+    width: 22px;
+    height: 2px;
+    background: #333;
+    display: block;
+    position: relative;
+    transition: all 0.25s ease;
+  }
+
+  .hamburger::before,
+  .hamburger::after {
+    content: '';
+    width: 22px;
+    height: 2px;
+    background: #333;
+    position: absolute;
+    left: 0;
+    transition: all 0.25s ease;
+  }
+
+  .hamburger::before {
+    top: -7px;
+  }
+
+  .hamburger::after {
+    top: 7px;
+  }
+
+  .hamburger.open {
+    background: transparent;
+  }
+
+  .hamburger.open::before {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+
+  .hamburger.open::after {
+    transform: rotate(-45deg) translate(5px, -5px);
+  }
+
+  /* Mobile nav overlay */
+  .nav {
+    display: none;
+  }
+
+  .nav.open {
+    display: flex;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    z-index: 1050;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+
+  .nav.open .nav-link {
+    padding: 0.5rem 0.25rem;
+    display: block;
+    width: 100%;
+  }
+
+  .nav.open .user-menu {
+    border-left: none;
+    border-top: 1px solid #ddd;
+    padding-left: 0;
+    padding-top: 0.75rem;
+    width: 100%;
     justify-content: flex-start;
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
 
   .nav-link {
@@ -127,5 +216,13 @@
   .btn-logout {
     padding: 0.4rem 0.8rem;
     font-size: 0.85rem;
+  }
+
+  /* clickable backdrop when nav is open */
+  .nav-backdrop {
+    position: fixed;
+    inset: 0 0 0 0;
+    z-index: 1040;
+    background: rgba(0,0,0,0.25);
   }
 }

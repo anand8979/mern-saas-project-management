@@ -878,8 +878,8 @@ code {
   }
 }
 
-/* Additional mobile-first adjustments for <= 640px */
-@media (max-width: 640px) {
+/* Additional mobile-first adjustments for <= 768px */
+@media (max-width: 768px) {
   /* Header */
   .header-content {
     flex-wrap: wrap;
@@ -926,6 +926,17 @@ code {
     grid-template-columns: 1fr;
   }
 
+  /* Ensure icons and text scale a bit smaller */
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.8rem;
+  }
+
+  .stat-content h3 {
+    font-size: 1.6rem;
+  }
+
   /* Ensure project header stacks and actions wrap */
   .project-header {
     flex-direction: column;
@@ -946,7 +957,12 @@ code {
   }
 
   .users-table {
-    min-width: 600px;
+    min-width: 560px;
+  }
+
+  .users-table th,
+  .users-table td {
+    font-size: 0.9rem;
   }
 
   /* Forms: ensure single-column layout and no overflow */
@@ -954,8 +970,66 @@ code {
     grid-template-columns: 1fr;
   }
 
-  /* Utility tweaks to avoid horizontal scroll */
+  .form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+
+  /* Reduce large paddings/margins for small screens */
   .container {
     padding: 0 12px;
+  }
+
+  .dashboard-header h1,
+  .project-header h1,
+  .page-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .project-card,
+  .stat-card,
+  .task-card {
+    padding: 12px;
+  }
+
+  /* Ensure action buttons remain usable */
+  .btn-sm {
+    padding: 0.5rem 0.75rem;
+  }
+
+  /* Avoid accidental horizontal scroll by allowing break words */
+  h1,h2,h3,p,span {
+    word-break: break-word;
+  }
+
+  /* Utility to ensure overflow is only present for tables (if necessary) */
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* Keep a slightly more strict mobile limit for very small phones */
+@media (max-width: 420px) {
+  .users-table {
+    min-width: 520px;
+  }
+
+  .stat-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.6rem;
+  }
+
+  .stat-content h3 {
+    font-size: 1.4rem;
   }
 }
