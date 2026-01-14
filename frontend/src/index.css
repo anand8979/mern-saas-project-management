@@ -877,3 +877,85 @@ code {
     justify-content: flex-start;
   }
 }
+
+/* Additional mobile-first adjustments for <= 640px */
+@media (max-width: 640px) {
+  /* Header */
+  .header-content {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .logo,
+  .nav-link,
+  .user-name,
+  .user-role {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .nav {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .nav-link {
+    white-space: normal;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .user-menu {
+    border-left: none;
+    border-top: 1px solid #ddd;
+    padding-left: 0;
+    padding-top: 0.75rem;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  /* Make dashboard cards and projects stack cleanly */
+  .stats-grid,
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Ensure project header stacks and actions wrap */
+  .project-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .project-actions {
+    width: 100%;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  /* Tables: keep scrolling and avoid viewport overflow */
+  .table-container {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .users-table {
+    min-width: 600px;
+  }
+
+  /* Forms: ensure single-column layout and no overflow */
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Utility tweaks to avoid horizontal scroll */
+  .container {
+    padding: 0 12px;
+  }
+}
